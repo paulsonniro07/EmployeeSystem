@@ -1,0 +1,71 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "F:\\Project\\EmployeeSystem\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{B26A063E-031F-4EB4-B8E6-E1388AE36B7D}|EmployeeSystem.Infrastructure\\EmployeeSystem.Infrastructure.csproj|f:\\project\\employeesystem\\employeesystem.infrastructure\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{B26A063E-031F-4EB4-B8E6-E1388AE36B7D}|EmployeeSystem.Infrastructure\\EmployeeSystem.Infrastructure.csproj|solutionrelative:employeesystem.infrastructure\\data\\applicationdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{24346C6A-5294-4D18-B559-980B413D9D7C}|EmployeeSystem.WebUI.Server\\EmployeeSystem.WebUI.Server.csproj|f:\\project\\employeesystem\\employeesystem.webui.server\\components\\layout\\navmenu.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{24346C6A-5294-4D18-B559-980B413D9D7C}|EmployeeSystem.WebUI.Server\\EmployeeSystem.WebUI.Server.csproj|solutionrelative:employeesystem.webui.server\\components\\layout\\navmenu.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{24346C6A-5294-4D18-B559-980B413D9D7C}|EmployeeSystem.WebUI.Server\\EmployeeSystem.WebUI.Server.csproj|f:\\project\\employeesystem\\employeesystem.webui.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{24346C6A-5294-4D18-B559-980B413D9D7C}|EmployeeSystem.WebUI.Server\\EmployeeSystem.WebUI.Server.csproj|solutionrelative:employeesystem.webui.server\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "NavMenu.razor",
+              "DocumentMoniker": "F:\\Project\\EmployeeSystem\\EmployeeSystem.WebUI.Server\\Components\\Layout\\NavMenu.razor",
+              "RelativeDocumentMoniker": "EmployeeSystem.WebUI.Server\\Components\\Layout\\NavMenu.razor",
+              "ToolTip": "F:\\Project\\EmployeeSystem\\EmployeeSystem.WebUI.Server\\Components\\Layout\\NavMenu.razor",
+              "RelativeToolTip": "EmployeeSystem.WebUI.Server\\Components\\Layout\\NavMenu.razor",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2024-08-06T07:38:51.051Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ApplicationDbContext.cs",
+              "DocumentMoniker": "F:\\Project\\EmployeeSystem\\EmployeeSystem.Infrastructure\\Data\\ApplicationDbContext.cs",
+              "RelativeDocumentMoniker": "EmployeeSystem.Infrastructure\\Data\\ApplicationDbContext.cs",
+              "ToolTip": "F:\\Project\\EmployeeSystem\\EmployeeSystem.Infrastructure\\Data\\ApplicationDbContext.cs",
+              "RelativeToolTip": "EmployeeSystem.Infrastructure\\Data\\ApplicationDbContext.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAA4AAAAJAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-06T04:49:02.569Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "F:\\Project\\EmployeeSystem\\EmployeeSystem.WebUI.Server\\Program.cs",
+              "RelativeDocumentMoniker": "EmployeeSystem.WebUI.Server\\Program.cs",
+              "ToolTip": "F:\\Project\\EmployeeSystem\\EmployeeSystem.WebUI.Server\\Program.cs",
+              "RelativeToolTip": "EmployeeSystem.WebUI.Server\\Program.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAoAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-08-06T04:30:47.633Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
