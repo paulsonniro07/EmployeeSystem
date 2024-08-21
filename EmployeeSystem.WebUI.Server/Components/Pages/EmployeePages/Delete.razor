@@ -2,41 +2,56 @@
 
 @using Microsoft.EntityFrameworkCore
 @using EmployeeSystem.Domain.Entities
+@using EmployeeSystem.Application.Services
 @inject IDbContextFactory<EmployeeSystem.Infrastructure.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
-
+@inject EmployeeService EmployeeService
+@inject DepartmentService DepartmentService
+@rendermode InteractiveServer
 
 <PageTitle>Delete</PageTitle>
 
-<h1>Delete</h1>
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Delete Employee</MudText>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Employee</h4>
-    <hr />
-    @if (employee is null)
-    {
-        <p><em>Loading...</em></p>
-    }
-    else {
-        <dl class="row">
-            <dt class="col-sm-2">EmployeeName</dt>
-            <dd class="col-sm-10">@employee.EmployeeName</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">Position</dt>
-            <dd class="col-sm-10">@employee.Position</dd>
-        </dl>
-        <dl class="row">
-            <dt class="col-sm-2">DepartmentId</dt>
-            <dd class="col-sm-10">@employee.DepartmentId</dd>
-        </dl>
-        <EditForm method="post" Model="employee" OnValidSubmit="DeleteEmployee" FormName="delete" Enhance>
-            <button type="submit" class="btn btn-danger" disabled="@(employee is null)">Delete</button> |
-            <a href="/employees">Back to List</a>
-        </EditForm>
-    }
-</div>
+    <MudCard>
+        <MudCardContent>
+            <MudText Typo="Typo.h6" Align="Align.Center" Class="mb-4">Are you sure you want to delete this?</MudText>
+            @if (employee is null)
+            {
+                <MudText Typo="Typo.body1" Align="Align.Center" Color="Color.Secondary">Loading...</MudText>
+            }
+            else
+            {
+                <MudGrid>
+                    <MudItem xs="12" md="6">
+                        <MudTextField Label="Employee Name" Value="@employee.EmployeeName" ReadOnly="true" />
+                    </MudItem>
+
+                    <MudItem xs="12" md="6">
+                        <MudTextField Label="Position" Value="@employee.Position" ReadOnly="true" />
+                    </MudItem>
+
+                    <MudItem xs="12" md="6">
+                        <MudTextField Label="Department" Value="@employee.Department.DepartmentName" ReadOnly="true" />
+                    </MudItem>
+                </MudGrid>
+                <EditForm Model="employee" FormName="delete" Enhance>
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+                    <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="DeleteEmployee" Class="mt-4" Disabled="@(employee is null)">
+                        Delete
+                    </MudButton>
+                    <MudButton Variant="Variant.Text" Color="Color.Secondary" Href="/employees" Class="mt-4">
+                        Back to List
+                    </MudButton>
+                </EditForm>
+            }
+        </MudCardContent>
+    </MudCard>
+
+
+</MudContainer>
 
 @code {
     Employee? employee;
@@ -46,8 +61,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        employee = await context.Employees.FirstOrDefaultAsync(m => m.EmployeeId == EmployeeId);
+        employee = await EmployeeService.GetEmployeeByIdAsync(EmployeeId);
 
         if (employee is null)
         {
@@ -57,9 +71,15 @@
 
     public async Task DeleteEmployee()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Employees.Remove(employee!);
-        await context.SaveChangesAsync();
-        NavigationManager.NavigateTo("/employees");
+        var success = await EmployeeService.DeleteEmployeeAsync(employee);
+
+        if (!success)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/employees");
+        }
     }
 }

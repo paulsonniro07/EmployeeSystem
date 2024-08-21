@@ -6,6 +6,7 @@ using EmployeeSystem.Domain.Interfaces;
 using EmployeeSystem.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
+using MudBlazor.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,12 @@ builder.Services.AddInfrastructure();
 builder.Services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 builder.Services.AddScoped<EmployeeService>();
 
+builder.Services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+builder.Services.AddScoped<DepartmentService>();
+
+builder.Services.AddScoped<IAttendanceRepository, AttendanceRepository>();
+builder.Services.AddScoped<AttendanceService>();
+
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -28,6 +35,8 @@ builder.Services.AddDbContextFactory<ApplicationDbContext>(lifetime: ServiceLife
 builder.Services.AddQuickGridEntityFrameworkAdapter();
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+builder.Services.AddMudServices();
 
 var app = builder.Build();
 

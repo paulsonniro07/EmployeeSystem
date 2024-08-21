@@ -10,7 +10,9 @@ namespace EmployeeSystem.Domain.Interfaces
     public interface IDepartmentRepository
     {
         Task<Department> GetDepartmentByIdAsync(int id);
-        Task<IEnumerable<Department>> GetAllDepartmentsByAsync();
-        Task AddDepartment(Department department);
+        Task<IEnumerable<Department>> GetAllDepartmentsAsync();
+        Task AddDepartmentAsync(Department department);
+        Task<bool> UpdateDepartmentAsync(Department department);
+        Task<bool> DeleteDepartmentAsync(Department department);
     }
 }

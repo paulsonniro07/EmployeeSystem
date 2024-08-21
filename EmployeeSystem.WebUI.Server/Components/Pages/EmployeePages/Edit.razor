@@ -1,52 +1,84 @@
-﻿@page "/Employees/edit"
+﻿@page "/employees/edit"
 
 @using Microsoft.EntityFrameworkCore
 @using EmployeeSystem.Domain.Entities
+@using EmployeeSystem.Application.Services
 @inject IDbContextFactory<EmployeeSystem.Infrastructure.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject EmployeeService EmployeeService
+@inject DepartmentService DepartmentService
+@rendermode InteractiveServer
 
-<PageTitle>Edit</PageTitle>
+<PageTitle>Edit Employee</PageTitle>
 
-<h1>Edit</h1>
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Edit Employee</MudText>
 
-<h4>Employee</h4>
-<hr />
-@if (Employee is null)
-{
-    <p><em>Loading...</em></p>
-}
-else
-{
-    <div class="row">
-        <div class="col-md-4">
-            <EditForm method="post" Model="Employee" OnValidSubmit="UpdateEmployee" FormName="edit" Enhance>
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                <input type="hidden" name="Employee.EmployeeId" value="@Employee.EmployeeId" />
-                <div class="mb-3">
-                    <label for="employeename" class="form-label">EmployeeName:</label>
-                    <InputText id="employeename" @bind-Value="Employee.EmployeeName" class="form-control" />
-                    <ValidationMessage For="() => Employee.EmployeeName" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="position" class="form-label">Position:</label>
-                    <InputText id="position" @bind-Value="Employee.Position" class="form-control" />
-                    <ValidationMessage For="() => Employee.Position" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="departmentid" class="form-label">DepartmentId:</label>
-                    <InputNumber id="departmentid" @bind-Value="Employee.DepartmentId" class="form-control" />
-                    <ValidationMessage For="() => Employee.DepartmentId" class="text-danger" />
-                </div>
-                <button type="submit" class="btn btn-primary">Save</button>
-            </EditForm>
-        </div>
-    </div>
-}
+    @if (Employee is null)
+    {
+        <MudText Typo="Typo.body1" Align="Align.Center" Color="Color.Secondary">Loading...</MudText>
+    }
+    else
+    {
+        <MudCard>
+            <MudCardContent>
+                <EditForm Model="Employee" FormName="Edit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
 
-<div>
-    <a href="/employees">Back to List</a>
-</div>
+                    <MudGrid>
+                        <MudItem xs="12" md="6">
+                            <MudTextField Label="Employee No" @bind-Value="Employee.EmployeeNo" Required="true" />
+                        </MudItem>
+
+                        <MudItem xs="12" md="6">
+                            <MudTextField Label="Employee Name" @bind-Value="Employee.EmployeeName" Required="true" />
+                        </MudItem>
+
+                        <MudItem xs="12" md="6">
+                            <MudSelect Label="Gender" @bind-Value="Employee.Gender" Required="true">
+                                @foreach (var gender in Enum.GetValues(typeof(Gender)).Cast<Gender>())
+                                {
+                                    <MudSelectItem Value="@gender">@gender.ToString()</MudSelectItem>
+                                }
+                            </MudSelect>
+
+                        </MudItem>
+
+                        <MudItem xs="12" md="6">
+                            <MudTextField Label="Email" @bind-Value="Employee.Email" Required="true" />
+                        </MudItem>
+
+                        <MudItem xs="12" md="6">
+                            <MudTextField Label="Contact No" @bind-Value="Employee.ContactNo" Required="true" />
+                        </MudItem>
+
+                        <MudItem xs="12">
+                            <MudTextField Label="Address" @bind-Value="Employee.EmployeeAddress" Required="true" />
+                        </MudItem>
+
+                        <MudItem xs="12" md="6">
+                            <MudTextField Label="Position" @bind-Value="Employee.Position" Required="true" />
+                        </MudItem>
+
+                        <MudItem xs="12" md="6">
+                            <MudSelect Label="Department" @bind-Value="Employee.DepartmentId" Required="true">
+                                @foreach (var dept in Departments)
+                                {
+                                    <MudSelectItem Value="@dept.DepartmentId">@dept.DepartmentName</MudSelectItem>
+                                }
+                            </MudSelect>
+                        </MudItem>
+                    </MudGrid>
+
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateEmployee" Type="submit" Class="mt-4">Save</MudButton>
+                </EditForm>
+            </MudCardContent>
+        </MudCard>
+    }
+
+    <MudButton Variant="Variant.Text" Color="Color.Secondary" Href="/employees" Class="mt-4">Back to List</MudButton>
+</MudContainer>
 
 @code {
     [SupplyParameterFromQuery]
@@ -54,11 +86,13 @@ else
 
     [SupplyParameterFromForm]
     public Employee? Employee { get; set; }
+    public IEnumerable<Department> Departments { get; set; } = new List<Department>();
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        Employee ??= await context.Employees.FirstOrDefaultAsync(m => m.EmployeeId == EmployeeId);
+        Departments = await DepartmentService.GetAllDepartmentsAsync();
+
+        Employee = await EmployeeService.GetEmployeeByIdAsync(EmployeeId);
 
         if (Employee is null)
         {
@@ -70,31 +104,16 @@ else
     // For more details, see https://aka.ms/RazorPagesCRUD.
     public async Task UpdateEmployee()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Attach(Employee!).State = EntityState.Modified;
+        var success = await EmployeeService.UpdateEmployeeAsync(Employee);
 
-        try
+        if (!success)
         {
-            await context.SaveChangesAsync();
+            NavigationManager.NavigateTo("notfound");
         }
-        catch (DbUpdateConcurrencyException)
+        else
         {
-            if (!EmployeeExists(Employee!.EmployeeId))
-            {
-                NavigationManager.NavigateTo("notfound");
-            }
-            else
-            {
-                throw;
-            }
+            NavigationManager.NavigateTo("/employees");
         }
-
-        NavigationManager.NavigateTo("/employees");
     }
 
-    bool EmployeeExists(int employeeid)
-    {
-        using var context = DbFactory.CreateDbContext();
-        return context.Employees.Any(e => e.EmployeeId == employeeid);
-    }
 }

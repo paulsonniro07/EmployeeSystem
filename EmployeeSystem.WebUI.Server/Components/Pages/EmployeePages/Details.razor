@@ -1,36 +1,65 @@
 ﻿@page "/employees/details"
 
-@using Microsoft.EntityFrameworkCore
 @using EmployeeSystem.Domain.Entities
-@inject IDbContextFactory<EmployeeSystem.Infrastructure.Data.ApplicationDbContext> DbFactory
+@using EmployeeSystem.Application.Services
 @inject NavigationManager NavigationManager
+@inject EmployeeService EmployeeService
 
-<PageTitle>Details</PageTitle>
+<PageTitle>Employee Details</PageTitle>
 
-<h1>Details</h1>
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Employee Details</MudText>
 
-<div>
-    <h4>Employee</h4>
-    <hr />
     @if (employee is null)
     {
-        <p><em>Loading...</em></p>
+        <MudText Typo="Typo.body1" Align="Align.Center" Color="Color.Secondary">Loading...</MudText>
     }
-    else {
-        <dl class="row">
-            <dt class="col-sm-2">EmployeeName</dt>
-            <dd class="col-sm-10">@employee.EmployeeName</dd>
-            <dt class="col-sm-2">Position</dt>
-            <dd class="col-sm-10">@employee.Position</dd>
-            <dt class="col-sm-2">DepartmentId</dt>
-            <dd class="col-sm-10">@employee.DepartmentId</dd>
-        </dl>
-        <div>
-            <a href="@($"/employees/edit?employeeid={employee.EmployeeId}")">Edit</a> |
-            <a href="@($"/employees")">Back to List</a>
-        </div>
+    else
+    {
+        <MudCard>
+            <MudCardContent>
+                <MudGrid>
+                    <MudItem xs="12" md="6">
+                        <MudText Typo="Typo.h6">Employee No:</MudText>
+                        <MudText>@employee.EmployeeNo</MudText>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudText Typo="Typo.h6">Employee Name:</MudText>
+                        <MudText>@employee.EmployeeName</MudText>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudText Typo="Typo.h6">Gender:</MudText>
+                        <MudText>@employee.Gender</MudText>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudText Typo="Typo.h6">Email:</MudText>
+                        <MudText>@employee.Email</MudText>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudText Typo="Typo.h6">Contact No:</MudText>
+                        <MudText>@employee.ContactNo</MudText>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudText Typo="Typo.h6">Address:</MudText>
+                        <MudText>@employee.EmployeeAddress</MudText>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudText Typo="Typo.h6">Position:</MudText>
+                        <MudText>@employee.Position</MudText>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudText Typo="Typo.h6">Department:</MudText>
+                        <MudText>@employee.Department.DepartmentName</MudText>
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/employees/edit?employeeid={employee.EmployeeId}")">Edit</MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Secondary" Href="@($"/employees")">Back to List</MudButton>
+            </MudCardActions>
+        </MudCard>
     }
-</div>
+</MudContainer>
 
 @code {
     Employee? employee;
@@ -40,8 +69,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        employee = await context.Employees.FirstOrDefaultAsync(m => m.EmployeeId == EmployeeId);
+        employee = await EmployeeService.GetEmployeeByIdAsync(EmployeeId);
 
         if (employee is null)
         {

@@ -1,29 +1,9 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">EmployeeSystem.WebUI.Server</a>
-    </div>
-</div>
-
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="weather">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Weather
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="employees">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Employee
-            </NavLink>
-        </div>
-    </nav>
-</div>
-
+﻿@using MudBlazor
+<MudDrawer Clipped="true" Open="true" Variant="DrawerVariant.Persistent">
+    <MudNavMenu>
+        <MudNavLink Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
+        <MudNavLink Href="/employees" Match="NavLinkMatch.Prefix">Employees</MudNavLink>
+        <MudNavLink Href="/departments" Match="NavLinkMatch.Prefix">Departments</MudNavLink>
+        <MudNavLink Href="/attendances" Match="NavLinkMatch.Prefix">Attendances</MudNavLink>
+    </MudNavMenu>
+</MudDrawer>

@@ -1,0 +1,56 @@
+﻿@page "/departments/details"
+
+@using Microsoft.EntityFrameworkCore
+@using EmployeeSystem.Domain.Entities
+@inject IDbContextFactory<EmployeeSystem.Infrastructure.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Department Details</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Department Details</MudText>
+
+    @if (department is null)
+    {
+        <MudText Typo="Typo.body1" Align="Align.Center" Color="Color.Secondary">Loading...</MudText>
+    }
+    else
+    {
+        <MudCard>
+            <MudCardContent>
+                <MudGrid>
+                    <MudItem xs="12" md="6">
+                        <MudText Typo="Typo.h6">Department Code:</MudText>
+                        <MudText>@department.DepartmentCode</MudText>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudText Typo="Typo.h6">Department Name:</MudText>
+                        <MudText>@department.DepartmentName</MudText>
+                    </MudItem>
+                </MudGrid>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/departments/edit?departmentid={department.DepartmentId}")">Edit</MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Secondary" Href="@($"/departments")">Back to List</MudButton>
+            </MudCardActions>
+        </MudCard>
+    }
+</MudContainer>
+
+@code {
+    Department? department;
+
+    [SupplyParameterFromQuery]
+    public int DepartmentId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        department = await context.Departments.FirstOrDefaultAsync(m => m.DepartmentId == DepartmentId);
+
+        if (department is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

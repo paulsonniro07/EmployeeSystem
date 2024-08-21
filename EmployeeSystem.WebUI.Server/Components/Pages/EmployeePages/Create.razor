@@ -2,55 +2,103 @@
 
 @using Microsoft.EntityFrameworkCore
 @using EmployeeSystem.Domain.Entities
+@using EmployeeSystem.Application.Services
 @inject IDbContextFactory<EmployeeSystem.Infrastructure.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject EmployeeService EmployeeService
+@inject DepartmentService DepartmentService
+@rendermode InteractiveServer
 
-<PageTitle>Create</PageTitle>
+<PageTitle>Create Employee</PageTitle>
 
-<h1>Create</h1>
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Create Employee</MudText>
 
-<h4>Employee</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <EditForm method="post" Model="Employee" OnValidSubmit="AddEmployee" FormName="create" Enhance>
-            <DataAnnotationsValidator />
-            <ValidationSummary class="text-danger" />
-            <div class="mb-3">
-                <label for="employeename" class="form-label">EmployeeName:</label> 
-                <InputText id="employeename" @bind-Value="Employee.EmployeeName" class="form-control" /> 
-                <ValidationMessage For="() => Employee.EmployeeName" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="position" class="form-label">Position:</label> 
-                <InputText id="position" @bind-Value="Employee.Position" class="form-control" /> 
-                <ValidationMessage For="() => Employee.Position" class="text-danger" /> 
-            </div>        
-            <div class="mb-3">
-                <label for="departmentid" class="form-label">DepartmentId:</label> 
-                <InputNumber id="departmentid" @bind-Value="Employee.DepartmentId" class="form-control" /> 
-                <ValidationMessage For="() => Employee.DepartmentId" class="text-danger" /> 
-            </div>        
-            <button type="submit" class="btn btn-primary">Create</button>
-        </EditForm>
-    </div>
-</div>
+    <MudCard>
+        <MudCardContent>
+            <EditForm Model="Employee" FormName="create">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
 
-<div>
-    <a href="/employees">Back to List</a>
-</div>
+                <MudGrid>
+                    <MudItem xs="12" md="6">
+                        <MudTextField Label="Employee No" @bind-Value="Employee.EmployeeNo" Required="true" />
+                        <ValidationMessage For="() => Employee.EmployeeNo" />
+                    </MudItem>
+
+                    <MudItem xs="12" md="6">
+                        <MudTextField Label="Employee Name" @bind-Value="Employee.EmployeeName" Required="true" />
+                        <ValidationMessage For="() => Employee.EmployeeName" />
+                    </MudItem>
+
+                    <MudItem xs="12" md="6">
+                        <MudSelect T="Gender" Label="Gender" @bind-Value="Employee.Gender" Required="true">
+                            @foreach (Gender gender in Enum.GetValues(typeof(Gender)))
+                            {
+                                <MudSelectItem T="Gender" Value="@gender">@gender</MudSelectItem>
+                            }
+                        </MudSelect>
+
+                        <ValidationMessage For="() => Employee.Gender" />
+                    </MudItem>
+
+                    <MudItem xs="12" md="6">
+                        <MudTextField Label="Email" @bind-Value="Employee.Email" Required="true" />
+                        <ValidationMessage For="() => Employee.Email" />
+                    </MudItem>
+
+                    <MudItem xs="12" md="6">
+                        <MudTextField Label="Contact No" @bind-Value="Employee.ContactNo" Required="true" />
+                        <ValidationMessage For="() => Employee.ContactNo" />
+                    </MudItem>
+
+                    <MudItem xs="12">
+                        <MudTextField Label="Address" @bind-Value="Employee.EmployeeAddress" Required="true" TextFieldType="TextFieldType.MultiLine" />
+                        <ValidationMessage For="() => Employee.EmployeeAddress" />
+                    </MudItem>
+
+                    <MudItem xs="12" md="6">
+                        <MudTextField Label="Position" @bind-Value="Employee.Position" Required="true" />
+                        <ValidationMessage For="() => Employee.Position" />
+                    </MudItem>
+
+                    <MudItem xs="12" md="6">
+                        <MudSelect Label="Department" @bind-Value="Employee.DepartmentId" Required="true">
+                            @foreach (var dept in Departments)
+                            {
+                                <MudSelectItem Value="@dept.DepartmentId">@dept.DepartmentName</MudSelectItem>
+                            }
+                        </MudSelect>
+                        <ValidationMessage For="() => Employee.DepartmentId" />
+                    </MudItem>
+                </MudGrid>
+
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddEmployee" Type="submit" Class="mt-4">
+                    Create
+                </MudButton>
+            </EditForm>
+        </MudCardContent>
+    </MudCard>
+
+    <MudButton Variant="Variant.Text" Color="Color.Secondary" Href="/employees" Class="mt-4">
+        Back to List
+    </MudButton>
+</MudContainer>
 
 @code {
-
     [SupplyParameterFromForm]
     public Employee Employee { get; set; } = new();
 
-    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+    public IEnumerable<Department> Departments { get; set; } = new List<Department>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        Departments = await DepartmentService.GetAllDepartmentsAsync();
+    }
+
     public async Task AddEmployee()
     {
-        using var context = DbFactory.CreateDbContext();
-        context.Employees.Add(Employee);
-        await context.SaveChangesAsync();
+        await EmployeeService.AddEmployeeAsync(Employee);
         NavigationManager.NavigateTo("/employees");
     }
 }

@@ -1,0 +1,96 @@
+﻿@page "/departments"
+
+@using MudBlazor
+@using EmployeeSystem.Domain.Entities
+@using EmployeeSystem.Application.Services
+@inject DepartmentService DepartmentService
+
+<PageTitle>Departments</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mb-4">
+    <MudText Typo="Typo.h3" Align="Align.Center">Department Overview</MudText>
+    <MudText Typo="Typo.body1" Align="Align.Center" Color="Color.Secondary">
+        View and manage all department details here.
+    </MudText>
+</MudContainer>
+
+<p>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="departments/create">
+        Create New
+    </MudButton>
+</p>
+
+
+<MudTable Items="@departments" Dense="@dense" Hover="@hover" Bordered="@bordered" Striped="@striped" Filter="new Func<Department,bool>(FilterFunc1)" @bind-SelectedItem="selectedItem1">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Employees List</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="searchString1" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Department Code</MudTh>
+        <MudTh>Department Name</MudTh>
+        <MudTh>Action</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="DeptCode">@context.DepartmentCode</MudTd>
+        <MudTd DataLabel="Deptname">@context.DepartmentName</MudTd>
+        <MudTd>
+            <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"departments/edit?departmentid={context.DepartmentId}")">
+                Edit
+            </MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Info" Href="@($"departments/details?departmentid={context.DepartmentId}")">
+                Details
+            </MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Error" Href="@($"departments/delete?departmentid={context.DepartmentId}")">
+                Delete
+            </MudButton>
+        </MudTd>
+
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+<div class="d-flex flex-wrap mt-4">
+    <MudSwitch @bind-Value="hover" Color="Color.Primary">Hover</MudSwitch>
+    <MudSwitch @bind-Value="dense" Color="Color.Secondary">Dense</MudSwitch>
+    <MudSwitch @bind-Value="striped" Color="Color.Tertiary">Striped</MudSwitch>
+    <MudSwitch @bind-Value="bordered" Color="Color.Warning">Bordered</MudSwitch>
+    <MudSpacer />
+    <div style="min-width:200px;">
+        <MudText Class="align-self-center d-inline">Selected: @selectedItem1?.DepartmentName</MudText>
+    </div>
+</div>
+
+@code {
+
+    private bool dense = false;
+    private bool hover = true;
+    private bool striped = false;
+    private bool bordered = false;
+    private string searchString1 = "";
+    private Department selectedItem1 = null;
+    private HashSet<Department> selectedItems = new HashSet<Department>();
+
+    private IEnumerable<Department> departments = new List<Department>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        departments = await DepartmentService.GetAllDepartmentsAsync();
+    }
+
+    private bool FilterFunc1(Department department) => FilterFunc(department, searchString1);
+
+    private bool FilterFunc(Department department, string searchString)
+    {
+        if (string.IsNullOrWhiteSpace(searchString))
+            return true;
+        if (department.DepartmentCode.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        if (department.DepartmentName.Contains(searchString, StringComparison.OrdinalIgnoreCase))
+            return true;
+        return false;
+    }
+}

@@ -1,0 +1,56 @@
+﻿@page "/departments/create"
+
+@using Microsoft.EntityFrameworkCore
+@using EmployeeSystem.Domain.Entities
+@using EmployeeSystem.Application.Services
+@inject IDbContextFactory<EmployeeSystem.Infrastructure.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+@inject DepartmentService DepartmentService
+@rendermode InteractiveServer
+
+<PageTitle>Create Department</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Create Employee</MudText>
+
+    <MudCard>
+        <MudCardContent>
+            <EditForm Model="Department" FormName="create">
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+
+                <MudGrid>
+                    <MudItem xs="12" md="6">
+                        <MudTextField Label="Department Code" @bind-Value="Department.DepartmentCode" Required="true" />
+                        <ValidationMessage For="() => Department.DepartmentCode" />
+                    </MudItem>
+
+                    <MudItem xs="12" md="6">
+                        <MudTextField Label="Department Name" @bind-Value="Department.DepartmentName" Required="true" />
+                        <ValidationMessage For="() => Department.DepartmentName" />
+                    </MudItem>
+                   </MudGrid>
+
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddDepartment" Type="submit" Class="mt-4">
+                    Create
+                </MudButton>
+            </EditForm>
+        </MudCardContent>
+    </MudCard>
+
+    <MudButton Variant="Variant.Text" Color="Color.Secondary" Href="/departments" Class="mt-4">
+        Back to List
+    </MudButton>
+</MudContainer>
+@code {
+
+    [SupplyParameterFromForm]
+    public Department Department { get; set; } = new();
+
+    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+    public async Task AddDepartment()
+    {
+        await DepartmentService.AddDepartmentAsync(Department);
+        NavigationManager.NavigateTo("/departments");
+    }
+}

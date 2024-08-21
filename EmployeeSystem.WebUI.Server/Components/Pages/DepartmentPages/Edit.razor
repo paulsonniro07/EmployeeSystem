@@ -1,0 +1,82 @@
+﻿@page "/Departments/edit"
+
+@using Microsoft.EntityFrameworkCore
+@using EmployeeSystem.Domain.Entities
+@using EmployeeSystem.Application.Services
+@inject IDbContextFactory<EmployeeSystem.Infrastructure.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+@inject DepartmentService DepartmentService
+@rendermode InteractiveServer
+
+<PageTitle>Edit Department</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Edit Employee</MudText>
+
+
+    @if (Department is null)
+    {
+        <MudText Typo="Typo.body1" Align="Align.Center" Color="Color.Secondary">Loading...</MudText>
+    }
+    else
+    {
+        <MudCard>
+            <MudCardContent>
+                <EditForm Model="Department" FormName="Edit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <MudGrid>
+                        <MudItem xs="12" md="6">
+                            <MudTextField Label="Department Code" @bind-Value="Department.DepartmentCode" Required="true" />
+                        </MudItem>
+
+                        <MudItem xs="12" md="6">
+                            <MudTextField Label="Department Name" @bind-Value="Department.DepartmentName" Required="true" />
+                        </MudItem>
+                    </MudGrid>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateDepartment" Type="submit" Class="mt-4">Save</MudButton>
+
+                </EditForm>
+            </MudCardContent>
+        </MudCard>
+        <MudButton Variant="Variant.Text" Color="Color.Secondary" Href="/departments" Class="mt-4">Back to List</MudButton>
+
+    }
+</MudContainer>
+
+
+@code {
+    [SupplyParameterFromQuery]
+    public int DepartmentId { get; set; }
+
+    [SupplyParameterFromForm]
+    public Department? Department { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        Department = await DepartmentService.GetDepartmentByIdAsync(DepartmentId);
+
+        if (Department is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see https://aka.ms/RazorPagesCRUD.
+    public async Task UpdateDepartment()
+    {
+        var success = await DepartmentService.UpdateDepartmentAsync(Department);
+
+        if (!success)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/departments");
+        }
+    }
+
+}

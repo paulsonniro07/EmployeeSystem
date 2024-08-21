@@ -31,5 +31,15 @@ namespace EmployeeSystem.Application.Services
             await _employeeRepository.AddEmployeeAsync(employee);
         }
 
+        public async Task<bool> UpdateEmployeeAsync(Employee employee)
+        {
+            return await _employeeRepository.UpdateEmployeeAsync(employee);
+        }
+
+        public async Task<bool> DeleteEmployeeAsync(Employee employee)
+        {
+            return await _employeeRepository.DeleteEmployeeAsync(employee);
+        }
+
     }
 }
