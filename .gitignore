@@ -4,5 +4,7 @@
 /EmployeeSystem.Application/obj/
 /EmployeeSystem.Infrastructure/bin/
 /EmployeeSystem.Infrastructure/obj/
+/EmployeeSystem.Infrastructure/Migrations/
 /EmployeeSystem.WebUI.Server/bin/
 /EmployeeSystem.WebUI.Server/obj/
+/.vs/
