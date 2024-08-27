@@ -1,0 +1,71 @@
+﻿@page "/attendances/details"
+
+@using Microsoft.EntityFrameworkCore
+@using EmployeeSystem.Domain.Entities
+@using EmployeeSystem.Application.Services
+@inject IDbContextFactory<EmployeeSystem.Infrastructure.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+@inject AttendanceService AttendanceService
+
+<PageTitle>Attendance Details</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Attendance Details</MudText>
+
+    @if (attendance is null)
+    {
+        <MudText Typo="Typo.body1" Align="Align.Center" Color="Color.Secondary">Loading...</MudText>
+    }
+    else
+    {
+        <MudCard>
+            <MudCardContent>
+                <MudGrid>
+                    <MudItem xs="12" md="6">
+                        <MudText Typo="Typo.h6">Attendance No:</MudText>
+                        <MudText>@attendance.AttendanceNo</MudText>
+                    </MudItem>
+                    <MudItem xs="12" md="6">
+                        <MudText Typo="Typo.h6">Attendance Date:</MudText>
+                        <MudText>@(attendance.AttendanceDate?.ToString("yyyy/MM/dd") ?? "N/A")</MudText>
+                    </MudItem>
+                </MudGrid>
+
+                <MudText Typo="Typo.h6" Align="Align.Left" Class="mt-4">Employee Attendance</MudText>
+                <MudTable Items="attendance.EmployeeAttendances" Class="mt-4">
+                    <HeaderContent>
+                        <MudTh>Employee</MudTh>
+                        <MudTh>Present</MudTh>
+                        <MudTh>Remarks</MudTh>
+                    </HeaderContent>
+                    <RowTemplate Context="ea">
+                        <MudTd>@ea.Employee?.EmployeeName</MudTd>
+                        <MudTd>@ea.AttendanceStatus</MudTd>
+                        <MudTd>@ea.AttendanceNotes</MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"/attendances/edit?attendanceid={attendance.AttendanceId}")">Edit</MudButton>
+                <MudButton Variant="Variant.Text" Color="Color.Secondary" Href="@($"/attendances")">Back to List</MudButton>
+            </MudCardActions>
+        </MudCard>
+    }
+</MudContainer>
+
+@code {
+    Attendance? attendance;
+
+    [SupplyParameterFromQuery]
+    public int AttendanceId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        attendance = await AttendanceService.GetAttendanceByIdAsync(AttendanceId);
+
+        if (attendance is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

@@ -12,6 +12,8 @@ namespace EmployeeSystem.Domain.Interfaces
         Task<Attendance> GetAttendanceByIdAsync(int id);
         Task<IEnumerable<Attendance>> GetAllAttendancesAsync();
         Task AddAttendanceAsync(Attendance attendance);
+
+        Task AddEmployeeAttendanceAsync(EmployeeAttendance employeeAttendance);
         Task<bool> UpdateAttendanceAsync(Attendance attendance);
         Task<bool> DeleteAttendanceAsync(Attendance attendance);
     }

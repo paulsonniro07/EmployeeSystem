@@ -30,19 +30,23 @@
     <HeaderContent>
         <MudTh>Attendance No</MudTh>
         <MudTh>Attendance Date</MudTh>
+        <MudTh>Created Date</MudTh>
+        <MudTh>Modified Date</MudTh>
         <MudTh>Action</MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="AttendanceNo">@context.AttendanceNo</MudTd>
-        <MudTd DataLabel="AttendanceDate">@context.AttendanceDate</MudTd>
+        <MudTd DataLabel="AttendanceDate">@(context.AttendanceDate?.ToString("yyyy/MM/dd") ?? "N/A")</MudTd>
+        <MudTd DataLabel="CreatedDate">@(context.CreatedDate?.ToString("yyyy/MM/dd") ?? "N/A")</MudTd>
+        <MudTd DataLabel="ModifiedDate">@(context.ModifiedDate?.ToString("yyyy/MM/dd") ?? "N/A")</MudTd>
         <MudTd>
-            <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"attendance/edit?departmentid={context.AttendanceId}")">
+            <MudButton Variant="Variant.Text" Color="Color.Primary" Href="@($"attendances/edit?attendanceid={context.AttendanceId}")">
                 Edit
             </MudButton>
-            <MudButton Variant="Variant.Text" Color="Color.Info" Href="@($"attendance/details?departmentid={context.AttendanceId}")">
+            <MudButton Variant="Variant.Text" Color="Color.Info" Href="@($"attendances/details?attendanceid={context.AttendanceId}")">
                 Details
             </MudButton>
-            <MudButton Variant="Variant.Text" Color="Color.Error" Href="@($"attendance/delete?departmentid={context.AttendanceId}")">
+            <MudButton Variant="Variant.Text" Color="Color.Error" Href="@($"attendances/delete?attendanceid={context.AttendanceId}")">
                 Delete
             </MudButton>
         </MudTd>

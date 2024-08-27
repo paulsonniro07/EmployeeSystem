@@ -1,9 +1,8 @@
-.vs/EmployeeSystem/FileContentIndex/
-.EmployeeSystem.Domain\bin\
-.EmployeeSystem.Domain\obj\
-.EmployeeSystem.Application\bin\
-.EmployeeSystem.Application\obj\
-.EmployeeSystem.Infrastructure\bin\
-.EmployeeSystem.Infrastructure\obj\
-.EmployeeSystem.WebUI.Server\bin\
-.EmployeeSystem.WebUI.Server\obj\
+/EmployeeSystem.Domain/bin/
+/EmployeeSystem.Domain/obj/
+/EmployeeSystem.Application/bin/
+/EmployeeSystem.Application/obj/
+/EmployeeSystem.Infrastructure/bin/
+/EmployeeSystem.Infrastructure/obj/
+/EmployeeSystem.WebUI.Server/bin/
+/EmployeeSystem.WebUI.Server/obj/

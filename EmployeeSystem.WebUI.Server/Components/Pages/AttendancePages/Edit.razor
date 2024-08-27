@@ -1,0 +1,155 @@
+﻿@page "/attendances/edit"
+
+@using Microsoft.EntityFrameworkCore
+@using EmployeeSystem.Domain.Entities
+@using EmployeeSystem.Application.Services
+@using EmployeeSystem.WebUI.Server.Components.Pages.AttendancePages.EmployeeAttendancePages
+@inject IDbContextFactory<EmployeeSystem.Infrastructure.Data.ApplicationDbContext> DbFactory
+@inject NavigationManager NavigationManager
+@inject AttendanceService AttendanceService
+@inject EmployeeService EmployeeService
+@inject IDialogService DialogService
+@rendermode InteractiveServer
+
+<PageTitle>Edit Attendance</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Large" Class="mt-4">
+    <MudText Typo="Typo.h4" Align="Align.Center" Class="mb-4">Edit Attendance</MudText>
+
+    @if (attendance is null)
+    {
+        <MudText Typo="Typo.body1" Align="Align.Center" Color="Color.Secondary">Loading...</MudText>
+    }
+    else
+    {
+        <MudCard>
+            <MudCardContent>
+                <EditForm Model="attendance" FormName="Edit">
+                    <DataAnnotationsValidator />
+                    <ValidationSummary />
+
+                    <MudGrid>
+                        <MudItem xs="12" md="6">
+                            <MudTextField Label="Attendance No" @bind-Value="attendance.AttendanceNo" Required="true" />
+                        </MudItem>
+
+                        <MudItem xs="12" md="6">
+                            <MudDatePicker PickerVariant="PickerVariant.Dialog" Label="Attendance Date" @bind-Date="attendance.AttendanceDate" DateFormat="yyyy/MM/dd" Required="true" />
+                            <ValidationMessage For="() => attendance.AttendanceDate" />
+                        </MudItem>
+                    </MudGrid>
+
+                    <MudText Typo="Typo.h6" Align="Align.Left" Class="mb-4">Employee Attendance</MudText>
+                    <MudTable Items="attendance.EmployeeAttendances" Class="mt-4">
+                        <HeaderContent>
+                            <MudTh>Employee</MudTh>
+                            <MudTh>Present</MudTh>
+                            <MudTh>Actions</MudTh>
+                        </HeaderContent>
+                        <RowTemplate Context="ea">
+                            <MudTd>@ea.Employee.EmployeeName</MudTd>
+                            <MudTd>@ea.AttendanceStatus</MudTd>
+                            <MudTd>
+                                <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => OpenUpdateEmployeeAttendanceDialog(ea))">Edit</MudButton>
+                                <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="@(() => RemoveEmployeeAttendance(ea))">Remove</MudButton>
+                            </MudTd>
+                        </RowTemplate>
+                    </MudTable>
+
+
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAddEmployeeAttendanceDialog" Class="mt-4">Add Employee Attendance</MudButton>
+
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="UpdateAttendance" Type="submit" Class="mt-4">Save</MudButton>
+                </EditForm>
+            </MudCardContent>
+        </MudCard>
+        <MudButton Variant="Variant.Text" Color="Color.Secondary" Href="/attendances" Class="mt-4">Back to List</MudButton>
+    }
+</MudContainer>
+
+@code {
+    [SupplyParameterFromQuery]
+    public int AttendanceId { get; set; }
+
+    [SupplyParameterFromForm]
+    public Attendance? attendance { get; set; }
+
+    public List<Employee> employees { get; set; } = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        attendance = await AttendanceService.GetAttendanceByIdAsync(AttendanceId);
+        if (attendance is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+            return;
+        }
+
+        employees = (await EmployeeService.GetAllEmployeesAsync()).ToList();
+
+        // Ensure EmployeeAttendances is not null
+        if (attendance.EmployeeAttendances == null)
+        {
+            attendance.EmployeeAttendances = new List<EmployeeAttendance>();
+        }
+    }
+
+    public async Task OpenAddEmployeeAttendanceDialog()
+    {
+        var parameters = new DialogParameters
+            {
+                ["Employees"] = employees
+            };
+
+        var dialog = await DialogService.ShowAsync<AddEmployeeAttendanceDialog>("Add Employee Attendance", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Canceled && result.Data is EmployeeAttendance employeeAttendance)
+        {
+            await AttendanceService.AddEmployeeAttendanceAsync(employeeAttendance);
+            attendance.EmployeeAttendances.Add(employeeAttendance);
+        }
+    }
+
+    public async Task OpenUpdateEmployeeAttendanceDialog(EmployeeAttendance employeeAttendance)
+    {
+        var parameters = new DialogParameters
+            {
+                ["Employees"] = employees,
+                ["employeeAttendance"] = employeeAttendance // Pass the specific EmployeeAttendance object
+            };
+
+        var dialog = await DialogService.ShowAsync<UpdateEmployeeAttendanceDialog>("Update Employee Attendance", parameters);
+        var result = await dialog.Result;
+
+        if (!result.Canceled && result.Data is EmployeeAttendance updatedEmployeeAttendance)
+        {
+            // Update the existing EmployeeAttendance object with the new data
+            var index = attendance.EmployeeAttendances.IndexOf(employeeAttendance);
+            if (index != -1)
+            {
+                attendance.EmployeeAttendances[index] = updatedEmployeeAttendance;
+            }
+        }
+    }
+
+
+    public void RemoveEmployeeAttendance(EmployeeAttendance employeeAttendance)
+    {
+        attendance.EmployeeAttendances.Remove(employeeAttendance);
+    }
+
+    public async Task UpdateAttendance()
+    {
+        var success = await AttendanceService.UpdateAttendanceAsync(attendance);
+
+        if (!success)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+        else
+        {
+            NavigationManager.NavigateTo("/attendances");
+        }
+    }
+}

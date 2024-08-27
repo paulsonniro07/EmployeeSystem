@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,9 +15,10 @@ namespace EmployeeSystem.Domain.Entities
     }
     public class EmployeeAttendance
     {
+        [Key]
         public int EmployeeAttendanceId { get; set; }
-        public int AttendanceId { get; set; }
-        public int EmployeeId {  get; set; }
+        public int? AttendanceId { get; set; }
+        public int? EmployeeId {  get; set; }
         public Employee Employee {  get; set; }
 
         public AttendanceStatus AttendanceStatus { get; set; } = AttendanceStatus.Present;

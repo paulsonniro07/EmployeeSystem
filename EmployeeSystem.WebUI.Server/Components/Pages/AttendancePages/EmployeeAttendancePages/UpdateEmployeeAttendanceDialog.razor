@@ -1,0 +1,74 @@
+﻿@using MudBlazor
+@using EmployeeSystem.Domain.Entities
+@inject ISnackbar Snackbar
+
+<MudDialog Class="blur dialog-background" TitleClass="blur dialog-background-title" ContentClass="dialog-background-surface py-10" ActionsClass="dialog-background-surface">
+    <DialogContent>
+        <MudForm>
+            <MudSelect T="int?" Label="Employee" @bind-Value="employeeAttendance.EmployeeId" Required="true">
+                @foreach (var employee in Employees)
+                {
+                    <MudSelectItem T="int?" Value="employee.EmployeeId">@employee.EmployeeName</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudSelect T="AttendanceStatus" Label="Attendance Status" @bind-Value="employeeAttendance.AttendanceStatus" Required="true">
+                @foreach (AttendanceStatus attendanceStatus in Enum.GetValues(typeof(AttendanceStatus)))
+                {
+                    <MudSelectItem T="AttendanceStatus" Value="@attendanceStatus">@attendanceStatus</MudSelectItem>
+                }
+            </MudSelect>
+
+            <MudTextField T="string" Label="Remarks" @bind-Value="employeeAttendance.AttendanceNotes" />
+        </MudForm>
+    </DialogContent>
+
+    <DialogActions>
+        <MudButton Color="Color.Primary" OnClick="Save">Save</MudButton>
+        <MudButton Color="Color.Error" OnClick="Cancel">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+<style>
+    .blur {
+        backdrop-filter: blur(10px);
+    }
+
+    .dialog-background {
+        background-color: transparent;
+    }
+
+    .dialog-background-title {
+        background: rgba(var(--mud-palette-info-lighten), 0.5);
+        color: var(--mud-palette-white);
+    }
+
+    .dialog-background-surface {
+        background: rgba(var(--mud-palette-surface), 0.75);
+    }
+</style>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; }
+
+    [Parameter] public List<Employee> Employees { get; set; } = new List<Employee>();
+
+    [Parameter] public EmployeeAttendance employeeAttendance { get; set; } = new EmployeeAttendance();
+
+    private void Save()
+    {
+        if (employeeAttendance.EmployeeId == null)
+        {
+            Snackbar.Add("Please select an employee.", Severity.Error);
+            return;
+        }
+
+        MudDialog.Close(DialogResult.Ok(employeeAttendance));
+    }
+
+    private void Cancel()
+    {
+        MudDialog.Cancel();
+    }
+}

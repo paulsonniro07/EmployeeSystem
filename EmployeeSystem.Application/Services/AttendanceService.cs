@@ -31,6 +31,11 @@ namespace EmployeeSystem.Application.Services
             await _attendanceRepository.AddAttendanceAsync(attendance);
         }
 
+        public async Task AddEmployeeAttendanceAsync(EmployeeAttendance employeeAttendance)
+        {
+            await _attendanceRepository.AddEmployeeAttendanceAsync(employeeAttendance);
+        }
+
         public async Task<bool> UpdateAttendanceAsync(Attendance attendance)
         {
             return await _attendanceRepository.UpdateAttendanceAsync(attendance);

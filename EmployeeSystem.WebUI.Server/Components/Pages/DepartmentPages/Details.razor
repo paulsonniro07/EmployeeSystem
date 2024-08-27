@@ -2,8 +2,10 @@
 
 @using Microsoft.EntityFrameworkCore
 @using EmployeeSystem.Domain.Entities
+@using EmployeeSystem.Application.Services
 @inject IDbContextFactory<EmployeeSystem.Infrastructure.Data.ApplicationDbContext> DbFactory
 @inject NavigationManager NavigationManager
+@inject DepartmentService DepartmentService
 
 <PageTitle>Department Details</PageTitle>
 
@@ -45,8 +47,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        using var context = DbFactory.CreateDbContext();
-        department = await context.Departments.FirstOrDefaultAsync(m => m.DepartmentId == DepartmentId);
+        department = await DepartmentService.GetDepartmentByIdAsync(DepartmentId);
 
         if (department is null)
         {

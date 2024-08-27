@@ -21,7 +21,7 @@ namespace EmployeeSystem.Infrastructure.Data
 
         public async Task<Attendance> GetAttendanceByIdAsync(int id)
         {
-            return await _context.Attendances.FirstOrDefaultAsync(e => e.AttendanceId == id);
+            return await _context.Attendances.Include(e => e.EmployeeAttendances).ThenInclude(ea => ea.Employee).FirstOrDefaultAsync(e => e.AttendanceId == id);
         }
 
         public async Task<IEnumerable<Attendance>> GetAllAttendancesAsync()
@@ -33,6 +33,13 @@ namespace EmployeeSystem.Infrastructure.Data
             _context.Attendances.Add(attendance);
             await _context.SaveChangesAsync();
         }
+
+        public async Task AddEmployeeAttendanceAsync(EmployeeAttendance employeeAttendance)
+        {
+            _context.EmployeeAttendances.Add(employeeAttendance);
+            await _context.SaveChangesAsync();
+        }
+
         public async Task<bool> UpdateAttendanceAsync(Attendance attendance)
         {
             if (attendance == null) return false;
