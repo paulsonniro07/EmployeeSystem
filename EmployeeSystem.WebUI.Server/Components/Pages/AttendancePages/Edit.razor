@@ -10,6 +10,7 @@
 @inject EmployeeService EmployeeService
 @inject IDialogService DialogService
 @rendermode InteractiveServer
+@inject ISnackbar Snackbar
 
 <PageTitle>Edit Attendance</PageTitle>
 
@@ -106,8 +107,16 @@
 
         if (!result.Canceled && result.Data is EmployeeAttendance employeeAttendance)
         {
-            await AttendanceService.AddEmployeeAttendanceAsync(employeeAttendance);
-            attendance.EmployeeAttendances.Add(employeeAttendance);
+            // Check for duplicate employee attendance
+            if (attendance.EmployeeAttendances.Any(ea => ea.EmployeeId == employeeAttendance.EmployeeId))
+            {
+                Snackbar.Add("This employee attendance already exists.", Severity.Error);
+            }
+            else
+            {
+                await AttendanceService.AddEmployeeAttendanceAsync(employeeAttendance);
+                attendance.EmployeeAttendances.Add(employeeAttendance);
+            }
         }
     }
 
@@ -128,7 +137,16 @@
             var index = attendance.EmployeeAttendances.IndexOf(employeeAttendance);
             if (index != -1)
             {
-                attendance.EmployeeAttendances[index] = updatedEmployeeAttendance;
+                if (attendance.EmployeeAttendances.Any(ea => ea.EmployeeId == employeeAttendance.EmployeeId))
+                {
+                    Snackbar.Add("This employee attendance already exists.", Severity.Error);
+                }
+                else
+                {
+                    attendance.EmployeeAttendances[index] = updatedEmployeeAttendance;
+                    await AttendanceService.UpdateAttendanceAsync(attendance);
+                    StateHasChanged();
+                }
             }
         }
     }
