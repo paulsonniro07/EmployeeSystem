@@ -56,15 +56,27 @@
 
     [Parameter] public EmployeeAttendance employeeAttendance { get; set; } = new EmployeeAttendance();
 
+    [Parameter] public List<EmployeeAttendance> employeeAttendances { get; set; }
+
+
     private void Save()
     {
+        if (employeeAttendances.Any(ea => ea.EmployeeId == employeeAttendance.EmployeeId && ea.EmployeeAttendanceId != employeeAttendance.EmployeeAttendanceId))
+        {
+            Snackbar.Add("This employee attendance already exists.", Severity.Error);
+            return;
+        }
+
         if (employeeAttendance.EmployeeId == null)
         {
             Snackbar.Add("Please select an employee.", Severity.Error);
             return;
         }
+        else
+        {
+            MudDialog.Close(DialogResult.Ok(employeeAttendance));
+        }
 
-        MudDialog.Close(DialogResult.Ok(employeeAttendance));
     }
 
     private void Cancel()

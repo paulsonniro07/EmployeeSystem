@@ -1,7 +1,7 @@
 ﻿@using MudBlazor
 @inherits LayoutComponentBase
 
-<MudThemeProvider @ref="@_mudThemeProvider" @bind-IsDarkMode="@_isDarkMode" />
+<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" Theme="_theme" />
 
 <MudPopoverProvider />
 <MudDialogProvider />
@@ -12,35 +12,31 @@
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudText Typo="Typo.h5" Class="ml-3">Application</MudText>
         <MudSpacer />
+        
+        <!-- Dark Mode Switch -->
+        <MudSwitch @bind-Value="_isDarkMode" Color="Color.Primary" Class="ma-4" T="bool" Label="Toggle Light/Dark Mode" />
+
         <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
     </MudAppBar>
+    
     <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
         <NavMenu/>
     </MudDrawer>
+    
     <MudMainContent>
-    <MudContainer MaxWidth="MaxWidth.Medium">
-        @Body
-    </MudContainer>
-</MudMainContent>
+        <MudContainer MaxWidth="MaxWidth.Medium">
+            @Body
+        </MudContainer>
+    </MudMainContent>
 </MudLayout>
 
 @code {
     bool _drawerOpen = true;
-    private bool _isDarkMode;
-    private MudThemeProvider _mudThemeProvider;
-
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            _isDarkMode = await _mudThemeProvider.GetSystemPreference();
-            StateHasChanged();
-        }
-    }
+    private MudTheme _theme = new();
+    private bool _isDarkMode = true;
 
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
     }
-
 }

@@ -44,12 +44,14 @@
                     <MudTable Items="attendance.EmployeeAttendances" Class="mt-4">
                         <HeaderContent>
                             <MudTh>Employee</MudTh>
-                            <MudTh>Present</MudTh>
+                            <MudTh>Status</MudTh>
+                            <MudTh>Remark</MudTh>
                             <MudTh>Actions</MudTh>
                         </HeaderContent>
                         <RowTemplate Context="ea">
                             <MudTd>@ea.Employee.EmployeeName</MudTd>
                             <MudTd>@ea.AttendanceStatus</MudTd>
+                            <MudTd>@ea.AttendanceNotes</MudTd>
                             <MudTd>
                                 <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => OpenUpdateEmployeeAttendanceDialog(ea))">Edit</MudButton>
                                 <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="@(() => RemoveEmployeeAttendance(ea))">Remove</MudButton>
@@ -125,7 +127,8 @@
         var parameters = new DialogParameters
             {
                 ["Employees"] = employees,
-                ["employeeAttendance"] = employeeAttendance // Pass the specific EmployeeAttendance object
+                ["employeeAttendance"] = employeeAttendance,
+                ["employeeAttendances"] = attendance.EmployeeAttendances
             };
 
         var dialog = await DialogService.ShowAsync<UpdateEmployeeAttendanceDialog>("Update Employee Attendance", parameters);
@@ -133,20 +136,12 @@
 
         if (!result.Canceled && result.Data is EmployeeAttendance updatedEmployeeAttendance)
         {
-            // Update the existing EmployeeAttendance object with the new data
             var index = attendance.EmployeeAttendances.IndexOf(employeeAttendance);
             if (index != -1)
             {
-                if (attendance.EmployeeAttendances.Any(ea => ea.EmployeeId == employeeAttendance.EmployeeId))
-                {
-                    Snackbar.Add("This employee attendance already exists.", Severity.Error);
-                }
-                else
-                {
-                    attendance.EmployeeAttendances[index] = updatedEmployeeAttendance;
-                    await AttendanceService.UpdateAttendanceAsync(attendance);
-                    StateHasChanged();
-                }
+                attendance.EmployeeAttendances[index] = updatedEmployeeAttendance;
+                await AttendanceService.UpdateAttendanceAsync(attendance);
+                StateHasChanged();
             }
         }
     }
